@@ -1,0 +1,121 @@
+ Restaurar cards colocando na Fila
+pipe = Repo.find(id) 
+//acima eu procurando por Repo caso seja uma tabela
+pipe.cards.deleted.where("cards.deleted_at > 'yyyy-mm-dd").each do |card|
+    puts card.id
+    ::Restore::CardRestoreWorker.perform_async(card.id)
+//esse cara acima é o que joga o restore na fila
+End
+
+Restaurar sem colocar na fila
+phase = Phase.deleted.find(id)
+Support::Restore::PhaseRestore.restore!(phase)
+
+Restaurar Campos sem colocar na fila
+field = Field.deleted.find(ID)
+restore = Support::Restore::FieldRestore.new(field) & restore.restore!
+OU.find(
+restore = Support::Restore::FieldRestore.new(field) & restore.cascade
+OU
+**Support::Restore::FieldRestore.restore!(field)
+Faz o reindex (fix.reindex_all_cards e fix.clean_cache apenas)
+
+Deletar pipe
+pipe = Pipe.find(id)
+destroyer = Destroyer::PipeDestroyer.new(pipe)
+destroyer.destroy! Time.now, user
+
+Arrumar status de importação
+fixstatus = RepoItemsImportation.find()
+fixstatus.update(status: "failed")
+
+
+Atualizar e-mail de usuário
+user=User.find(ID)
+user.update(email: “newemail@mail.com”)
+If it doesn’t work, try:
+user=User.find(ID)
+user.update_column(:email, “newemail@mail.com”)
+
+Remove user in the cardAssigness
+
+
+
+
+
+
+
+
+
+
+
+Remap and reindex -> Pipe
+
+Seta o pipe :   subject = Repo.find(id)
+Copia o codigo link >> https://docs.google.com/document/d/1Zl9m1jsho29W5pJyhAhtvgTgqFxcX4ZSngE0O_S4ins/edit?usp=sharing
+Se quiser conferir  digitar FixRepoFieldSequencebyRepo
+fix_repo  = FixRepoFieldSequencebyRepo.new(subject)
+fix_repo.cascade 
+
+
+Change user “old” token 
+
+
+
+
+
+Add user on a org
+Steps:
+1. Find the organization
+2. Find the user
+3. Call the method #set_role_for on the user passing the organization and the role name
+organization = Organization.find(organization_id)
+user = User.find(user_id)
+user.set_role_for(organization, :admin)
+
+
+
+>>>>>>>pipe.cards.count
+
+
+Delete user
+
+user = User.find(id)
+destroyer = Destroyer::UserDestroyer.new(user)
+destroyer.destroy!
+
+
+
+
+Delete condition_expressions
+
+ConditionExpression.find(*)  
+test.update(deleted_at: Time.now())
+
+
+Update expressions_structure 
+
+Exp_str = Condition.find(1)
+Exp_str = update(expressions_structure: [["4"], ["2", "3"]]) < Número que quer deixar
+
+Recolocar email inbox na fila
+
+query = "SELECT id FROM inbox_emails WHERE state = 1 AND created_at < NOW() - '2 hour'::INTERVAL"
+ids = ReadOnlyModels::InboxEmail.connection.exec_query(query).map { |result| result["id"].to_i }
+ids.each { |inbox_email_id| EmailMessagingWorker.new.perform(inbox_email_id) }
+
+
+Card Field value error (Field destroyer)
+
+field = Field.deleted.find(ID)
+destruir = Destroyer::FieldDestroyer.new(field)
+destruir.destroy!
+
+
+Create a new user token
+
+user = User.find(ID)
+user.authentication_token = PipefyAuth::Crypto.generate_friendly_token
+user.save!
+user.reload
+
